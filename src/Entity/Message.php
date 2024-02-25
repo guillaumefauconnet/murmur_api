@@ -11,14 +11,17 @@ class Message
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\Column(type: 'guid', unique: true)]
     private ?string $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'text')]
     private ?string $content = null;
 
     #[ManyToOne(targetEntity: Conversation::class, inversedBy: 'messages')]
     private Conversation $conversation;
+
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'messages')]
+    private User $user;
 
 
     public function getId(): ?int
@@ -35,6 +38,28 @@ class Message
     {
         $this->content = $content;
 
+        return $this;
+    }
+
+    public function getConversation(): Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(Conversation $conversation): Message
+    {
+        $this->conversation = $conversation;
+        return $this;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): Message
+    {
+        $this->user = $user;
         return $this;
     }
 }
