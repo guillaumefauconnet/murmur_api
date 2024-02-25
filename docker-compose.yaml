@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  api:
+    build: docker/php
+    container_name: php
+    environment:
+      PHP_IDE_CONFIG: "serverName=Jupiter"
+      # Variables to connect to our Postgres server.
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: murmur
+      PGPORT: 5432
+      # Hostname of our Postgres container.
+      PGHOST: db
+    ports:
+      - "8000:8000"
+    depends_on:
+      # The DB container needs to be started before we start this container.
+      - db
+    volumes:
+      - ./:/var/www/api
+      - ./docker/php/conf/zzz-docker.ini:/usr/local/etc/php/conf.d/zzz-docker.ini
+    restart: always
+
+  db:
+    # We use the predefined Postgres image.
+    image: postgres:16.1
+    environment:
+      # Set user/password for Postgres.
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # Set a path where Postgres should store the data.
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - /home/gfauconnet/projets/pgdata:/var/lib/postgresql/data
