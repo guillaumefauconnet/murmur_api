@@ -2,23 +2,25 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Domain\UserService;
+use App\Dto\PostUser;
+
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-class SecurityController
+class SecurityController extends BaseController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(EntityManagerInterface $em): JsonResponse
+    public function register(UserService $service, Request $request): Response
     {
-        $user = new User();
-        $user->setMail("test@test.com");
-        $user->setPassword("passowrd");
-        $user->setGlobalNickName('Test');
+        $data = $this->deserialize(PostUser::class, $request->getContent());
+        $responseDto = $service->registerUser($data);
 
-        $em->persist($user);
-        $em->flush();
+        $response = new Response($this->serialize($responseDto));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 
 }
