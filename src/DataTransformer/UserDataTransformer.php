@@ -6,11 +6,15 @@ use App\Dto\GetUser;
 use App\Dto\PostUser;
 use App\Entity\User;
 use Exception;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserDataTransformer
 {
-    public function __construct(private readonly ValidatorInterface $validator)
+    public function __construct(
+        private readonly ValidatorInterface $validator,
+        private readonly UserPasswordHasherInterface $passwordHasher
+    )
     {
     }
 
@@ -27,7 +31,13 @@ class UserDataTransformer
 
         $user = new User();
         $user->setMail($dto->mail);
-        $user->setPassword($dto->password);
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            $dto->password
+        );
+
+        $user->setPassword($hashedPassword);
         $user->setGlobalNickName($dto->globalNickName);
 
         return $user;
