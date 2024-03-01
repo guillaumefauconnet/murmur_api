@@ -5,11 +5,12 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -33,11 +34,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(targetEntity: Message::class, mappedBy: 'user')]
     private Collection $messages;
 
-    /*public function __construct() {
-        $this->id = Uuid::v4();
-    }*/
+    #[ManyToMany(targetEntity: Conversation::class, inversedBy: 'users')]
+    #[JoinTable(name: 'conversation_user')]
+    private Collection $conversations;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -83,6 +84,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMessages(Collection $messages): User
     {
         $this->messages = $messages;
+        return $this;
+    }
+
+    public function getConversations(): Collection
+    {
+        return $this->conversations;
+    }
+
+    public function setConversations(Collection $conversations): User
+    {
+        $this->conversations = $conversations;
         return $this;
     }
 

@@ -28,10 +28,13 @@ class ConversationUser
     #[ORM\Column(type: 'boolean')]
     private ?bool $moderator = null;
 
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'conversations')]
+    private User $user;
+
     #[ManyToOne(targetEntity: Conversation::class, inversedBy: 'users')]
     private Conversation $conversation;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -77,6 +80,17 @@ class ConversationUser
     public function setModerator(?bool $moderator): ConversationUser
     {
         $this->moderator = $moderator;
+        return $this;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): ConversationUser
+    {
+        $this->user = $user;
         return $this;
     }
 

@@ -6,6 +6,8 @@ use App\Repository\ConversationRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -26,10 +28,11 @@ class Conversation
     #[JoinColumn(name: 'settings_id', referencedColumnName: 'id')]
     private ConversationSettings $settings;
 
-    #[OneToMany(targetEntity: ConversationUser::class, mappedBy: 'conversation')]
+    #[ManyToMany(targetEntity: User::class, inversedBy: 'conversations')]
+    #[JoinTable(name: 'conversation_user')]
     private Collection $users;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

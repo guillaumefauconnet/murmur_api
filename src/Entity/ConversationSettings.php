@@ -4,8 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ConversationSettingsRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: ConversationSettingsRepository::class)]
@@ -20,7 +19,10 @@ class ConversationSettings
     #[ORM\Column(type: 'boolean')]
     private ?bool $private = null;
 
-    public function getId(): ?int
+    #[ManyToOne(targetEntity: Conversation::class, inversedBy: 'settings')]
+    private Conversation $conversation;
+
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -33,6 +35,17 @@ class ConversationSettings
     public function setPrivate(?bool $private): ConversationSettings
     {
         $this->private = $private;
+        return $this;
+    }
+
+    public function getConversation(): Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(Conversation $conversation): ConversationSettings
+    {
+        $this->conversation = $conversation;
         return $this;
     }
 }
