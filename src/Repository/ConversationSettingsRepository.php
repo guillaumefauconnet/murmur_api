@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\ConversationSettings;
+use App\Entity\ConversationSetting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ConversationSettings>
+ * @extends ServiceEntityRepository<ConversationSetting>
  *
- * @method ConversationSettings|null find($id, $lockMode = null, $lockVersion = null)
- * @method ConversationSettings|null findOneBy(array $criteria, array $orderBy = null)
- * @method ConversationSettings[]    findAll()
- * @method ConversationSettings[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ConversationSetting|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ConversationSetting|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ConversationSetting[]    findAll()
+ * @method ConversationSetting[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ConversationSettingsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ConversationSettings::class);
+        parent::__construct($registry, ConversationSetting::class);
     }
 
     //    /**
-    //     * @return ConversationSettings[] Returns an array of ConversationSettings objects
+    //     * @return ConversationSetting[] Returns an array of ConversationSetting objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -36,7 +36,7 @@ class ConversationSettingsRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?ConversationSettings
+    //    public function findOneBySomeField($value): ?ConversationSetting
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')

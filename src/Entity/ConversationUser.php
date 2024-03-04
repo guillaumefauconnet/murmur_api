@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: ConversationUserRepository::class)]
+#[ORM\Table(name: '`conversation_user`')]
 class ConversationUser
 {
     #[ORM\Id]
@@ -28,10 +29,12 @@ class ConversationUser
     #[ORM\Column(type: 'boolean')]
     private ?bool $moderator = null;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: 'conversations')]
+    #[ManyToOne(targetEntity: User::class, inversedBy: 'conversationUsers')]
+    #[ORM\JoinColumn(nullable: false)]
     private User $user;
 
-    #[ManyToOne(targetEntity: Conversation::class, inversedBy: 'users')]
+    #[ManyToOne(targetEntity: Conversation::class, inversedBy: 'conversationUsers')]
+    #[ORM\JoinColumn(nullable: false)]
     private Conversation $conversation;
 
     public function getId(): ?string

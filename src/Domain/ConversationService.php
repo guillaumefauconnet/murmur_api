@@ -3,8 +3,12 @@
 namespace App\Domain;
 
 use App\DataTransformer\ConversationDataTransformer;
+use App\Dto\GetConversation;
+use App\Dto\PostConversation;
+use App\Entity\Conversation;
 use App\Entity\User;
 use App\Repository\ConversationRepository;
+use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 
 
@@ -32,5 +36,22 @@ class ConversationService
         }
 
         return $dtoConversations;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function createNewConversation(PostConversation $dto): GetConversation
+    {
+        $conversation = $this->transformer->toEntity($dto);
+
+        /** @var $me User */
+        $me = $this->security->getUser();
+        $conversation->addUser($me);
+
+        //dd($conversation);
+        $this->repository->save($conversation);
+
+        return $this->transformer->toDto($conversation);
     }
 }

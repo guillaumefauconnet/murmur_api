@@ -2,7 +2,7 @@
 
 namespace App\Dto\Core;
 
-class EntityDto
+class EntityDto extends BaseDto
 {
     public ?int $count = null;
 

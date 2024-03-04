@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: ConversationSettingsRepository::class)]
-class ConversationSettings
+class ConversationSetting
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
@@ -32,7 +32,7 @@ class ConversationSettings
         return $this->private;
     }
 
-    public function setPrivate(?bool $private): ConversationSettings
+    public function setPrivate(?bool $private): ConversationSetting
     {
         $this->private = $private;
         return $this;
@@ -43,7 +43,7 @@ class ConversationSettings
         return $this->conversation;
     }
 
-    public function setConversation(Conversation $conversation): ConversationSettings
+    public function setConversation(Conversation $conversation): ConversationSetting
     {
         $this->conversation = $conversation;
         return $this;

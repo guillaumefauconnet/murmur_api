@@ -2,7 +2,7 @@
 
 namespace App\Dto;
 
-class GetConversationSettings
+class GetConversationSetting
 {
     public ?string $id = null;
 

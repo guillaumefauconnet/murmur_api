@@ -25,7 +25,6 @@ class Message
     #[ManyToOne(targetEntity: User::class, inversedBy: 'messages')]
     private User $user;
 
-
     public function getId(): ?string
     {
         return $this->id;

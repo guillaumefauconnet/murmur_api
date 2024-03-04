@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ConversationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -21,16 +22,21 @@ class Conversation
     #[ORM\Column(type: 'guid', unique: true)]
     private ?string $id = null;
 
-    #[OneToMany(targetEntity: Message::class, mappedBy: 'conversation')]
+    #[OneToMany(targetEntity: Message::class, mappedBy: 'conversation', cascade: ['persist'])]
     private Collection $messages;
 
-    #[OneToOne(targetEntity: ConversationSettings::class)]
+    #[OneToOne(targetEntity: ConversationSetting::class, cascade: ['persist'])]
     #[JoinColumn(name: 'settings_id', referencedColumnName: 'id')]
-    private ConversationSettings $settings;
+    private ConversationSetting $setting;
 
-    #[ManyToMany(targetEntity: User::class, inversedBy: 'conversations')]
-    #[JoinTable(name: 'conversation_user')]
+    #[OneToMany(targetEntity: ConversationUser::class, mappedBy: 'conversation', cascade: ['persist'])]
     private Collection $users;
+
+    public function __construct()
+    {
+        $this->messages = new ArrayCollection();
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?string
     {
@@ -48,14 +54,14 @@ class Conversation
         return $this;
     }
 
-    public function getSettings(): ConversationSettings
+    public function getSetting(): ConversationSetting
     {
-        return $this->settings;
+        return $this->setting;
     }
 
-    public function setSettings(ConversationSettings $settings): Conversation
+    public function setSetting(ConversationSetting $setting): Conversation
     {
-        $this->settings = $settings;
+        $this->setting = $setting;
         return $this;
     }
 
@@ -67,6 +73,21 @@ class Conversation
     public function setUsers(Collection $users): Conversation
     {
         $this->users = $users;
+        return $this;
+    }
+
+    public function addUser(User $user): Conversation
+    {
+        $conversationUser = new ConversationUser();
+        $conversationUser->setUser($user);
+        $conversationUser->setConversation($this);
+        $conversationUser->setNickName($user->getGlobalNickName());
+        $conversationUser->setOwner(false);
+        $conversationUser->setAdmin(false);
+        $conversationUser->setModerator(false);
+
+        $this->users->add($conversationUser);
+
         return $this;
     }
 }

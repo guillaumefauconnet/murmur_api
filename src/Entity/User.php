@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinTable;
@@ -34,9 +35,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[OneToMany(targetEntity: Message::class, mappedBy: 'user')]
     private Collection $messages;
 
-    #[ManyToMany(targetEntity: Conversation::class, inversedBy: 'users')]
-    #[JoinTable(name: 'conversation_user')]
+    #[OneToMany(targetEntity: ConversationUser::class, mappedBy: 'user',  cascade: ['persist'])]
     private Collection $conversations;
+
+    public function __construct()
+    {
+        $this->messages = new ArrayCollection();
+        $this->conversations = new ArrayCollection();
+    }
 
     public function getId(): ?string
     {

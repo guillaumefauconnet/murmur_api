@@ -6,6 +6,7 @@ use App\Entity\Conversation;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,7 +20,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ConversationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $entityManager
+    )
     {
         parent::__construct($registry, Conversation::class);
     }
@@ -33,6 +37,12 @@ class ConversationRepository extends ServiceEntityRepository
             ]));
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function save(Conversation $conversation): void
+    {
+        $this->entityManager->persist($conversation);
+        $this->entityManager->flush();
     }
 
     //    /**

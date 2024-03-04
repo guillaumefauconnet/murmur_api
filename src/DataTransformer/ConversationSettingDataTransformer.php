@@ -2,12 +2,12 @@
 
 namespace App\DataTransformer;
 
-use App\Dto\GetConversationSettings;
-use App\Entity\ConversationSettings;
+use App\Dto\GetConversationSetting;
+use App\Entity\ConversationSetting;
 use Exception;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ConversationSettingsDataTransformer
+class ConversationSettingDataTransformer
 {
     public function __construct(
         private readonly ValidatorInterface $validator
@@ -18,7 +18,7 @@ class ConversationSettingsDataTransformer
     /**
      * @throws Exception
      */
-    public function toEntity(GetConversationSettings $dto): ConversationSettings
+    public function toEntity(GetConversationSetting $dto): ConversationSetting
     {
         $errors = $this->validator->validate($dto);
 
@@ -26,17 +26,17 @@ class ConversationSettingsDataTransformer
             throw new Exception((string) $errors);
         }
 
-        $conversationSettings = new ConversationSettings();
+        $conversationSettings = new ConversationSetting();
         $conversationSettings->setPrivate($dto->private);
 
         return $conversationSettings;
     }
 
-    public function toDto(ConversationSettings $entity): GetConversationSettings
+    public function toDto(ConversationSetting $entity): GetConversationSetting
     {
-        $dto = new GetConversationSettings();
+        $dto = new GetConversationSetting();
         $dto->private = $entity->getPrivate();
-        $dto->conversation = $this->conversationDataTransformer->toDto($entity->getConversation());
+        //$dto->conversation = $this->conversationDataTransformer->toDto($entity->getConversation());
 
         return $dto;
     }
