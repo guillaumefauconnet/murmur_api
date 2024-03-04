@@ -8,7 +8,5 @@ class GetMessage
 
     public ?string $content = null;
 
-    public ?GetConversation $conversation = null;
-
     public ?GetUser $user = null;
 }

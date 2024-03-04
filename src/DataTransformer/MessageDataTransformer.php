@@ -41,7 +41,6 @@ class MessageDataTransformer
     {
         $dto = new GetMessage();
         $dto->content = $entity->getContent();
-        $dto->conversation = $this->conversationDataTransformer->toDto($entity->getConversation());
         $dto->user = $this->userDataTransformer->toDto($entity->getUser());
 
         return $dto;

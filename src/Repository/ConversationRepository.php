@@ -31,9 +31,10 @@ class ConversationRepository extends ServiceEntityRepository
     public function getByUser(User $user)
     {
         $qb = $this->createQueryBuilder("c")
-            ->where(':user MEMBER OF c.users')
+            ->join("c.conversationUsers", "cu")
+            ->where('cu.user = :user')
             ->setParameters(new ArrayCollection([
-                new Parameter('user', $user),
+                new Parameter('user', $user->getId()),
             ]));
 
         return $qb->getQuery()->getResult();

@@ -8,6 +8,7 @@ use App\Entity\Conversation;
 use App\Entity\ConversationSetting;
 use App\Entity\ConversationUser;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -16,11 +17,10 @@ class ConversationDataTransformer
 {
     public function __construct(
         private readonly ValidatorInterface $validator,
-        private readonly Security $security,
         private readonly MessageDataTransformer $messageDataTransformer,
         private readonly UserDataTransformer $userDataTransformer,
-        private readonly ConversationSettingDataTransformer $conversationSettingDataTransformer
-
+        private readonly ConversationSettingDataTransformer $conversationSettingDataTransformer,
+        private readonly UserRepository $userRepository
     )
     {
     }
@@ -49,17 +49,20 @@ class ConversationDataTransformer
 
         $conversation->setSetting($setting);
 
-        if ($dto->users !== null) {
-            /** @var User $me */
-            $me = $this->security->getUser();
+        if ($dto->userIds !== null) {
+            foreach ($dto->userIds as $userId) {
+                $user = $this->userRepository->find($userId);
 
-            $conversationUser = new ConversationUser();
-            $conversationUser->setUser($me);
-            $conversationUser->setConversation($conversation);
-            $conversationUser->setNickName($me->getGlobalNickName());
-            $conversationUser->setOwner(true);
-            $conversationUser->setAdmin(true);
-            $conversationUser->setModerator(true);
+                if ($user !== null) {
+                    $conversationUser = new ConversationUser();
+                    $conversationUser->setUser($user);
+                    $conversationUser->setConversation($conversation);
+                    $conversationUser->setNickName($user->getGlobalNickName());
+                    $conversationUser->setOwner(false);
+                    $conversationUser->setAdmin(false);
+                    $conversationUser->setModerator(false);
+                }
+            }
         }
 
         return $conversation;
@@ -83,7 +86,7 @@ class ConversationDataTransformer
 
         $users = [];
 
-        foreach ($entity->getUsers() as $user) {
+        foreach ($entity->getConversationUsers() as $user) {
             $users[] = $this->userDataTransformer->toDto($user->getUser());
         }
 

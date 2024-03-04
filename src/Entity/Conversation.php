@@ -30,12 +30,12 @@ class Conversation
     private ConversationSetting $setting;
 
     #[OneToMany(targetEntity: ConversationUser::class, mappedBy: 'conversation', cascade: ['persist'])]
-    private Collection $users;
+    private Collection $conversationUsers;
 
     public function __construct()
     {
         $this->messages = new ArrayCollection();
-        $this->users = new ArrayCollection();
+        $this->conversationUsers = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -65,28 +65,20 @@ class Conversation
         return $this;
     }
 
-    public function getUsers(): Collection
+    public function getConversationUsers(): Collection
     {
-        return $this->users;
+        return $this->conversationUsers;
     }
 
-    public function setUsers(Collection $users): Conversation
+    public function setConversationUsers(Collection $conversationUsers): Conversation
     {
-        $this->users = $users;
+        $this->conversationUsers = $conversationUsers;
         return $this;
     }
 
-    public function addUser(User $user): Conversation
+    public function addConversationUser(ConversationUser $conversationUser): Conversation
     {
-        $conversationUser = new ConversationUser();
-        $conversationUser->setUser($user);
-        $conversationUser->setConversation($this);
-        $conversationUser->setNickName($user->getGlobalNickName());
-        $conversationUser->setOwner(false);
-        $conversationUser->setAdmin(false);
-        $conversationUser->setModerator(false);
-
-        $this->users->add($conversationUser);
+        $this->conversationUsers->add($conversationUser);
 
         return $this;
     }

@@ -8,5 +8,5 @@ class PostConversation
 {
     public ?GetConversationSetting $setting = null;
 
-    public ?array $users = null;
+    public ?array $userIds = null;
 }

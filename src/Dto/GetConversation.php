@@ -14,7 +14,6 @@ class GetConversation
         $this->users = null;
     }
 
-
     public ?string $id = null;
 
     public ?array $messages = null;

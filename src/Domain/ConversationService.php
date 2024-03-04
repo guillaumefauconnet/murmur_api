@@ -6,6 +6,7 @@ use App\DataTransformer\ConversationDataTransformer;
 use App\Dto\GetConversation;
 use App\Dto\PostConversation;
 use App\Entity\Conversation;
+use App\Entity\ConversationUser;
 use App\Entity\User;
 use App\Repository\ConversationRepository;
 use Exception;
@@ -47,7 +48,16 @@ class ConversationService
 
         /** @var $me User */
         $me = $this->security->getUser();
-        $conversation->addUser($me);
+
+        $conversationUser = new ConversationUser();
+        $conversationUser->setUser($me);
+        $conversationUser->setConversation($conversation);
+        $conversationUser->setNickName($me->getGlobalNickName());
+        $conversationUser->setOwner(true);
+        $conversationUser->setAdmin(true);
+        $conversationUser->setModerator(true);
+
+        $conversation->addConversationUser($conversationUser);
 
         //dd($conversation);
         $this->repository->save($conversation);
