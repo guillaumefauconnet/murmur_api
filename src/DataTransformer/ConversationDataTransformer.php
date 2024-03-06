@@ -71,6 +71,7 @@ class ConversationDataTransformer
     public function toDto(Conversation $entity): GetConversation
     {
         $dto = new GetConversation();
+        $dto->id = $entity->getId();
 
         $messages = [];
 
