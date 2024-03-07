@@ -9,13 +9,13 @@ class PostUser
     #[Assert\NotNull]
     #[Assert\NotBlank]
     #[Assert\Email]
-    public ?string $mail = null;
+    public string $mail;
 
     #[Assert\NotNull]
     #[Assert\NotBlank]
-    public ?string $password = null;
+    public string $password;
 
     #[Assert\NotNull]
     #[Assert\NotBlank]
-    public ?string $globalNickName = null;
+    public string $globalNickName;
 }

@@ -5,7 +5,6 @@ namespace App\Domain;
 use App\DataTransformer\ConversationDataTransformer;
 use App\Dto\GetConversation;
 use App\Dto\PostConversation;
-use App\Entity\Conversation;
 use App\Entity\ConversationUser;
 use App\Entity\User;
 use App\Repository\ConversationRepository;

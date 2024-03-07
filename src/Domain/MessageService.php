@@ -3,13 +3,8 @@
 namespace App\Domain;
 
 use App\DataTransformer\MessageDataTransformer;
-use App\Dto\GetConversation;
 use App\Dto\GetMessage;
-use App\Dto\PostConversation;
 use App\Dto\PostMessage;
-use App\Entity\Conversation;
-use App\Entity\ConversationUser;
-use App\Entity\Message;
 use App\Entity\User;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;

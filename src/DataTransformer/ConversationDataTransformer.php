@@ -7,10 +7,8 @@ use App\Dto\PostConversation;
 use App\Entity\Conversation;
 use App\Entity\ConversationSetting;
 use App\Entity\ConversationUser;
-use App\Entity\User;
 use App\Repository\UserRepository;
 use Exception;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ConversationDataTransformer
@@ -18,8 +16,7 @@ class ConversationDataTransformer
     public function __construct(
         private readonly ValidatorInterface $validator,
         private readonly MessageDataTransformer $messageDataTransformer,
-        private readonly UserDataTransformer $userDataTransformer,
-        private readonly ConversationSettingDataTransformer $conversationSettingDataTransformer,
+        private readonly ConversationUserDataTransformer $conversationUserDataTransformer,
         private readonly UserRepository $userRepository
     )
     {
@@ -38,15 +35,8 @@ class ConversationDataTransformer
 
         $conversation = new Conversation();
 
-
-        if ($dto->setting === null) {
-            $setting = new ConversationSetting();
-            $setting->setPrivate(true);
-        }
-        else {
-            $setting = $this->conversationSettingDataTransformer->toEntity($dto->setting);
-        }
-
+        $setting = new ConversationSetting();
+        $setting->setPrivate($dto->private);
         $conversation->setSetting($setting);
 
         if ($dto->userIds !== null) {
@@ -80,15 +70,12 @@ class ConversationDataTransformer
         }
 
         $dto->messages = $messages;
-
-        if ($entity->getSetting() !== null) {
-            $dto->setting = $this->conversationSettingDataTransformer->toDto($entity->getSetting()) ?? null;
-        }
+        $dto->private = $entity->getSetting()->getPrivate();
 
         $users = [];
 
-        foreach ($entity->getConversationUsers() as $user) {
-            $users[] = $this->userDataTransformer->toDto($user->getUser());
+        foreach ($entity->getConversationUsers() as $conversationUser) {
+            $users[] = $this->conversationUserDataTransformer->toDto($conversationUser);
         }
 
         $dto->users = $users;

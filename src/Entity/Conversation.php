@@ -3,17 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\ConversationRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\JoinTable;
-use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName:"deletedAt", timeAware:false)]
 class Conversation
 {
     #[ORM\Id]
@@ -31,6 +32,9 @@ class Conversation
 
     #[OneToMany(targetEntity: ConversationUser::class, mappedBy: 'conversation', cascade: ['persist'])]
     private Collection $conversationUsers;
+
+    #[ORM\Column(name:"deletedAt", type:"datetime", nullable:true)]
+    private DateTime $deletedAt;
 
     public function __construct()
     {
@@ -80,6 +84,17 @@ class Conversation
     {
         $this->conversationUsers->add($conversationUser);
 
+        return $this;
+    }
+
+    public function getDeletedAt(): DateTime
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(DateTime $deletedAt): Conversation
+    {
+        $this->deletedAt = $deletedAt;
         return $this;
     }
 }

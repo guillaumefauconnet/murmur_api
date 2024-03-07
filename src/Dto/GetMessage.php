@@ -4,9 +4,9 @@ namespace App\Dto;
 
 class GetMessage
 {
-    public ?string $id = null;
+    public string $id;
 
-    public ?string $content = null;
+    public string $content;
 
-    public ?GetUser $user = null;
+    public GetUser $user;
 }

@@ -6,5 +6,5 @@ class CollectionDto extends BaseDto
 {
     public ?int $count = null;
 
-    public ?array $data = null;
+    public array $data = [];
 }

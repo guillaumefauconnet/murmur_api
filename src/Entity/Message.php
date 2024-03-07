@@ -3,13 +3,19 @@
 namespace App\Entity;
 
 use App\Repository\MessageRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName:"deletedAt", timeAware:false)]
 class Message
 {
+    use TimestampableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "CUSTOM")]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
@@ -24,6 +30,9 @@ class Message
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'messages')]
     private User $user;
+
+    #[ORM\Column(name:"deletedAt", type:"datetime", nullable:true)]
+    private DateTime $deletedAt;
 
     public function getId(): ?string
     {
@@ -61,6 +70,17 @@ class Message
     public function setUser(User $user): Message
     {
         $this->user = $user;
+        return $this;
+    }
+
+    public function getDeletedAt(): DateTime
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(DateTime $deletedAt): Message
+    {
+        $this->deletedAt = $deletedAt;
         return $this;
     }
 }

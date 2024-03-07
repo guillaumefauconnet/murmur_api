@@ -4,7 +4,7 @@ namespace App\Dto\Core;
 
 class BaseDto
 {
-    public ?string $state = null;
+    public string $state;
 
     public ?string $message = null;
 }

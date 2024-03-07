@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Domain\ConversationService;
 use App\Domain\MessageService;
 use App\Dto\Core\CollectionDto;
 use App\Dto\Core\EntityDto;

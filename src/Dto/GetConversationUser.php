@@ -4,15 +4,22 @@ namespace App\Dto;
 
 class GetConversationUser
 {
-    public ?string $id = null;
+    public function __construct()
+    {
+        $this->nickName = null;
+    }
+
+    public string $id;
 
     public ?string $nickName = null;
 
-    public ?bool $owner = null;
+    public bool $owner = false;
 
-    public ?bool $admin = null;
+    public bool $admin = false;
 
-    public ?bool $moderator = null;
+    public bool $moderator = false;
 
-    public ?GetConversation $conversation = null;
+    public string $conversationId;
+
+    public string $userId;
 }

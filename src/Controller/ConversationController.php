@@ -6,7 +6,6 @@ use App\Domain\ConversationService;
 use App\Dto\Core\CollectionDto;
 use App\Dto\Core\EntityDto;
 use App\Dto\PostConversation;
-use App\Dto\PostUser;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

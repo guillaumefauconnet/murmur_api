@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\ConversationSettingsRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ConversationSettingsRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName:"deletedAt", timeAware:false)]
 class ConversationSetting
 {
     #[ORM\Id]
@@ -21,6 +24,9 @@ class ConversationSetting
 
     #[ManyToOne(targetEntity: Conversation::class, inversedBy: 'settings')]
     private Conversation $conversation;
+
+    #[ORM\Column(name:"deletedAt", type:"datetime", nullable:true)]
+    private DateTime $deletedAt;
 
     public function getId(): ?string
     {
@@ -46,6 +52,17 @@ class ConversationSetting
     public function setConversation(Conversation $conversation): ConversationSetting
     {
         $this->conversation = $conversation;
+        return $this;
+    }
+
+    public function getDeletedAt(): DateTime
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(DateTime $deletedAt): ConversationSetting
+    {
+        $this->deletedAt = $deletedAt;
         return $this;
     }
 }

@@ -4,7 +4,7 @@ namespace App\Dto;
 
 class GetUser
 {
-    public ?string $mail = null;
+    public string $mail;
 
-    public ?string $globalNickName = null;
+    public string $globalNickName;
 }

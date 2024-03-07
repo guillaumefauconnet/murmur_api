@@ -2,11 +2,9 @@
 
 namespace App\Dto;
 
-use App\Entity\ConversationSetting;
-
 class PostConversation
 {
-    public ?GetConversationSetting $setting = null;
+    public bool $private = true;
 
     public ?array $userIds = null;
 }
