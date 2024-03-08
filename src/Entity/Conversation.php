@@ -11,10 +11,8 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
-#[Gedmo\SoftDeleteable(fieldName:"deletedAt", timeAware:false)]
 class Conversation
 {
     #[ORM\Id]

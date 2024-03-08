@@ -7,10 +7,9 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ConversationSettingsRepository::class)]
-#[Gedmo\SoftDeleteable(fieldName:"deletedAt", timeAware:false)]
+
 class ConversationSetting
 {
     #[ORM\Id]
