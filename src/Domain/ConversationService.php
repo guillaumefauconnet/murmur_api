@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Repository\ConversationRepository;
 use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
 class ConversationService
@@ -19,10 +20,9 @@ class ConversationService
         private readonly ConversationRepository $repository,
         private readonly Security $security
     )
-    {
-    }
+    {}
 
-    public function getConversations(): array
+    public function getMyConversations(): array
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -36,6 +36,20 @@ class ConversationService
         }
 
         return $dtoConversations;
+    }
+
+    public function getOneConversation(string $conversationId): GetConversation
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $conversation = $this->repository->find($conversationId);
+
+        if ($conversation && $conversation->hasUser($user)) {
+            return $this->transformer->toDto($conversation);
+        }
+
+        throw new NotFoundHttpException('Conversation not found');
     }
 
     /**
@@ -58,7 +72,6 @@ class ConversationService
 
         $conversation->addConversationUser($conversationUser);
 
-        //dd($conversation);
         $this->repository->save($conversation);
 
         return $this->transformer->toDto($conversation);

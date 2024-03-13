@@ -33,9 +33,6 @@ class Message
     #[ORM\Column(name:"updated_at", type:"datetime", nullable:false)]
     protected ?DateTime $updatedAt = null;
 
-    #[ORM\Column(name:"deletedAt", type:"datetime", nullable:true)]
-    private DateTime $deletedAt;
-
     public function getId(): ?string
     {
         return $this->id;

@@ -30,6 +30,16 @@ class MessageRepository extends ServiceEntityRepository
         $this->entityManager->flush();
     }
 
+    public function delete(string $messageId): void
+    {
+        $message = $this->find($messageId);
+        if ($message === null) {
+            return;
+        }
+        $this->entityManager->remove($message);
+        $this->entityManager->flush();
+    }
+
     //    /**
     //     * @return Message[] Returns an array of Message objects
     //     */

@@ -11,7 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 class SecurityController extends BaseController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(UserService $service, Request $request): Response
+    public function register(
+        UserService $service,
+        Request $request
+    ): Response
     {
         $data = $this->deserialize(PostUser::class, $request->getContent());
         $responseDto = $service->registerUser($data);
@@ -21,5 +24,4 @@ class SecurityController extends BaseController
 
         return $response;
     }
-
 }

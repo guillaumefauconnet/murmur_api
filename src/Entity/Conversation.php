@@ -72,17 +72,22 @@ class Conversation
         return $this->conversationUsers;
     }
 
-    public function setConversationUsers(Collection $conversationUsers): Conversation
-    {
-        $this->conversationUsers = $conversationUsers;
-        return $this;
-    }
-
     public function addConversationUser(ConversationUser $conversationUser): Conversation
     {
         $this->conversationUsers->add($conversationUser);
 
         return $this;
+    }
+
+    public function hasUser(User $user): bool
+    {
+        foreach ($this->conversationUsers as $conversationUser) {
+            if ($conversationUser->getUser() === $user) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getDeletedAt(): DateTime
