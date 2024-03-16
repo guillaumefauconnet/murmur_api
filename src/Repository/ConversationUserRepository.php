@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\ConversationUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,33 +17,21 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ConversationUserRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $entityManager
+    )
     {
         parent::__construct($registry, ConversationUser::class);
     }
 
-    //    /**
-    //     * @return ConversationUser[] Returns an array of ConversationUser objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?ConversationUser
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function delete(string $conversationUserId): void
+    {
+        $message = $this->find($conversationUserId);
+        if ($message === null) {
+            return;
+        }
+        $this->entityManager->remove($message);
+        $this->entityManager->flush();
+    }
 }

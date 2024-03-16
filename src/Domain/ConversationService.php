@@ -4,10 +4,13 @@ namespace App\Domain;
 
 use App\DataTransformer\ConversationDataTransformer;
 use App\Dto\GetConversation;
+use App\Dto\PatchConversation;
 use App\Dto\PostConversation;
 use App\Entity\ConversationUser;
 use App\Entity\User;
 use App\Repository\ConversationRepository;
+use App\Repository\ConversationUserRepository;
+use App\Repository\UserRepository;
 use Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,7 +20,9 @@ class ConversationService
 {
     public function __construct(
         private readonly ConversationDataTransformer $transformer,
-        private readonly ConversationRepository $repository,
+        private readonly ConversationRepository $conversationRepository,
+        private readonly UserRepository $userRepository,
+        private readonly ConversationUserRepository $conversationUserRepository,
         private readonly Security $security
     )
     {}
@@ -27,7 +32,7 @@ class ConversationService
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $conversations = $this->repository->getByUser($user);
+        $conversations = $this->conversationRepository->getByUser($user);
 
         $dtoConversations = [];
 
@@ -43,7 +48,7 @@ class ConversationService
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $conversation = $this->repository->find($conversationId);
+        $conversation = $this->conversationRepository->find($conversationId);
 
         if ($conversation && $conversation->hasUser($user)) {
             return $this->transformer->toDto($conversation);
@@ -72,7 +77,53 @@ class ConversationService
 
         $conversation->addConversationUser($conversationUser);
 
-        $this->repository->save($conversation);
+        $this->conversationRepository->save($conversation);
+
+        return $this->transformer->toDto($conversation);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function updateConversation(PatchConversation $dto, string $conversationId): GetConversation
+    {
+        $conversation = $this->transformer->toEntity($dto, $conversationId);
+
+        $this->conversationRepository->save($conversation);
+
+        return $this->transformer->toDto($conversation);
+    }
+
+    public function addUserToConversation(string $conversationId, string $userId): GetConversation
+    {
+        $conversation = $this->conversationRepository->find($conversationId);
+        $user = $this->userRepository->find($userId);
+
+        $conversationUser = new ConversationUser();
+        $conversationUser->setUser($user);
+        $conversationUser->setConversation($conversation);
+        $conversationUser->setNickName($user->getGlobalNickName());
+        $conversationUser->setOwner(false);
+        $conversationUser->setAdmin(false);
+        $conversationUser->setModerator(false);
+
+        $conversation->addConversationUser($conversationUser);
+
+        $this->conversationRepository->save($conversation);
+
+        return $this->transformer->toDto($conversation);
+    }
+
+    public function removeUserToConversation(string $conversationId, string $userId): GetConversation
+    {
+        $conversation = $this->conversationRepository->find($conversationId);
+        $user = $this->userRepository->find($userId);
+
+        $conversationUser = $this->conversationUserRepository->findOneBy(
+            ['user' => $user, 'conversation' => $conversation]
+        );
+
+        $this->conversationUserRepository->delete($conversationUser->getId());
 
         return $this->transformer->toDto($conversation);
     }

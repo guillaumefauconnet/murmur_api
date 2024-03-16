@@ -52,6 +52,7 @@ class MessageDataTransformer
         $dto->id = $entity->getId();
         $dto->content = $entity->getContent();
         $dto->user = $this->userDataTransformer->toDto($entity->getUser());
+        $dto->createdAt = $entity->getCreatedAt()->format('Y-m-d H:i:s');
 
         return $dto;
     }

@@ -3,10 +3,13 @@
 namespace App\DataTransformer;
 
 use App\Dto\GetConversation;
+use App\Dto\PatchConversation;
 use App\Dto\PostConversation;
 use App\Entity\Conversation;
 use App\Entity\ConversationSetting;
 use App\Entity\ConversationUser;
+use App\Repository\ConversationRepository;
+use App\Repository\ConversationUserRepository;
 use App\Repository\UserRepository;
 use Exception;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -17,7 +20,8 @@ class ConversationDataTransformer
         private readonly ValidatorInterface $validator,
         private readonly MessageDataTransformer $messageDataTransformer,
         private readonly ConversationUserDataTransformer $conversationUserDataTransformer,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
+        private readonly ConversationRepository $conversationRepository
     )
     {
     }
@@ -25,7 +29,7 @@ class ConversationDataTransformer
     /**
      * @throws Exception
      */
-    public function toEntity(PostConversation $dto): Conversation
+    public function toEntity(PostConversation|PatchConversation $dto, ?string $conversationId = null): Conversation
     {
         $errors = $this->validator->validate($dto);
 
@@ -33,13 +37,17 @@ class ConversationDataTransformer
             throw new Exception((string) $errors);
         }
 
-        $conversation = new Conversation();
+        if ($conversationId !== null) {
+            $conversation = $this->conversationRepository->find($conversationId);
+        } else {
+            $conversation = new Conversation();
+        }
 
         $setting = new ConversationSetting();
         $setting->setPrivate($dto->private);
         $conversation->setSetting($setting);
 
-        if ($dto->userIds !== null) {
+        if ($dto instanceof PostConversation && $dto->userIds !== null) {
             foreach ($dto->userIds as $userId) {
                 $user = $this->userRepository->find($userId);
 

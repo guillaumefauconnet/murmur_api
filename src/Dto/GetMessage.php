@@ -9,4 +9,6 @@ class GetMessage
     public string $content;
 
     public GetUser $user;
+
+    public string $createdAt;
 }
