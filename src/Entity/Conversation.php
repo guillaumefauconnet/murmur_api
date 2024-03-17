@@ -90,6 +90,33 @@ class Conversation
         return false;
     }
 
+    public function hasAdminUser(User $user): bool
+    {
+        foreach ($this->conversationUsers as $conversationUser) {
+            if ($conversationUser->getUser() === $user && $conversationUser->getAdmin() === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasOwnerUser(User $user): bool
+    {
+        foreach ($this->conversationUsers as $conversationUser) {
+            if ($conversationUser->getUser() === $user && $conversationUser->getOwner() === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasOwnerOrAdminUser(User $user): bool
+    {
+        return $this->hasOwnerUser($user) || $this->hasAdminUser($user);
+    }
+
     public function getDeletedAt(): DateTime
     {
         return $this->deletedAt;

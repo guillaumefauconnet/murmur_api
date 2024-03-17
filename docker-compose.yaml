@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  api:
-    build: docker/php
+  php:
+    build: ./docker/php
     container_name: php
     environment:
       PHP_IDE_CONFIG: "serverName=Jupiter"
@@ -14,12 +14,14 @@ services:
       # Hostname of our Postgres container.
       PGHOST: db
     ports:
-      - "8000:8000"
+      - "8000:9000"
+    networks:
+      - symfony_app
     depends_on:
       # The DB container needs to be started before we start this container.
       - db
     volumes:
-      - ./:/var/www/api
+      - ./:/var/www/murmur_api:cached
       - ./docker/php/conf/zzz-docker.ini:/usr/local/etc/php/conf.d/zzz-docker.ini
     restart: always
 
@@ -34,6 +36,21 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
+    networks:
+      - symfony_app
     restart: always
     volumes:
       - /home/gfauconnet/projets/pgdata:/var/lib/postgresql/data
+
+  nginx:
+    build:
+      context: ./docker/nginx
+    volumes:
+      - ./:/var/www/murmur_api:cached
+    ports:
+      - "80:80"
+    networks:
+      - symfony_app
+
+networks:
+  symfony_app:

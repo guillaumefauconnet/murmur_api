@@ -87,44 +87,65 @@ class ConversationService
      */
     public function updateConversation(PatchConversation $dto, string $conversationId): GetConversation
     {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
         $conversation = $this->transformer->toEntity($dto, $conversationId);
 
-        $this->conversationRepository->save($conversation);
+        if ($conversation && $conversation->hasUser($user)) {
+            $this->conversationRepository->save($conversation);
 
-        return $this->transformer->toDto($conversation);
+            return $this->transformer->toDto($conversation);
+        }
+
+        throw new NotFoundHttpException('Conversation not found');
     }
 
     public function addUserToConversation(string $conversationId, string $userId): GetConversation
     {
+        /** @var User $me */
+        $me = $this->security->getUser();
+
         $conversation = $this->conversationRepository->find($conversationId);
         $user = $this->userRepository->find($userId);
 
-        $conversationUser = new ConversationUser();
-        $conversationUser->setUser($user);
-        $conversationUser->setConversation($conversation);
-        $conversationUser->setNickName($user->getGlobalNickName());
-        $conversationUser->setOwner(false);
-        $conversationUser->setAdmin(false);
-        $conversationUser->setModerator(false);
+        if ($conversation && $conversation->hasOwnerOrAdminUser($me)) {
+            $conversationUser = new ConversationUser();
+            $conversationUser->setUser($user);
+            $conversationUser->setConversation($conversation);
+            $conversationUser->setNickName($user->getGlobalNickName());
+            $conversationUser->setOwner(false);
+            $conversationUser->setAdmin(false);
+            $conversationUser->setModerator(false);
 
-        $conversation->addConversationUser($conversationUser);
+            $conversation->addConversationUser($conversationUser);
 
-        $this->conversationRepository->save($conversation);
+            $this->conversationRepository->save($conversation);
 
-        return $this->transformer->toDto($conversation);
+            return $this->transformer->toDto($conversation);
+        }
+
+        throw new NotFoundHttpException('Conversation not found');
     }
 
     public function removeUserToConversation(string $conversationId, string $userId): GetConversation
     {
+        /** @var User $me */
+        $me = $this->security->getUser();
+
         $conversation = $this->conversationRepository->find($conversationId);
         $user = $this->userRepository->find($userId);
 
-        $conversationUser = $this->conversationUserRepository->findOneBy(
-            ['user' => $user, 'conversation' => $conversation]
-        );
+        if ($conversation && $conversation->hasOwnerOrAdminUser($me)) {
+            $conversationUser = $this->conversationUserRepository->findOneBy(
+                ['user' => $user, 'conversation' => $conversation]
+            );
 
-        $this->conversationUserRepository->delete($conversationUser->getId());
+            $this->conversationUserRepository->delete($conversationUser->getId());
 
-        return $this->transformer->toDto($conversation);
+            return $this->transformer->toDto($conversation);
+        }
+
+        throw new NotFoundHttpException('Conversation not found');
     }
 }

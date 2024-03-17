@@ -29,7 +29,7 @@ class ConversationDataTransformer
     /**
      * @throws Exception
      */
-    public function toEntity(PostConversation|PatchConversation $dto, ?string $conversationId = null): Conversation
+    public function toEntity(PostConversation|PatchConversation $dto, ?string $conversationId = null): ?Conversation
     {
         $errors = $this->validator->validate($dto);
 
@@ -43,22 +43,24 @@ class ConversationDataTransformer
             $conversation = new Conversation();
         }
 
-        $setting = new ConversationSetting();
-        $setting->setPrivate($dto->private);
-        $conversation->setSetting($setting);
+        if ($conversation) {
+            $setting = new ConversationSetting();
+            $setting->setPrivate($dto->private);
+            $conversation->setSetting($setting);
 
-        if ($dto instanceof PostConversation && $dto->userIds !== null) {
-            foreach ($dto->userIds as $userId) {
-                $user = $this->userRepository->find($userId);
+            if ($dto instanceof PostConversation && $dto->userIds !== null) {
+                foreach ($dto->userIds as $userId) {
+                    $user = $this->userRepository->find($userId);
 
-                if ($user !== null) {
-                    $conversationUser = new ConversationUser();
-                    $conversationUser->setUser($user);
-                    $conversationUser->setConversation($conversation);
-                    $conversationUser->setNickName($user->getGlobalNickName());
-                    $conversationUser->setOwner(false);
-                    $conversationUser->setAdmin(false);
-                    $conversationUser->setModerator(false);
+                    if ($user !== null) {
+                        $conversationUser = new ConversationUser();
+                        $conversationUser->setUser($user);
+                        $conversationUser->setConversation($conversation);
+                        $conversationUser->setNickName($user->getGlobalNickName());
+                        $conversationUser->setOwner(false);
+                        $conversationUser->setAdmin(false);
+                        $conversationUser->setModerator(false);
+                    }
                 }
             }
         }
