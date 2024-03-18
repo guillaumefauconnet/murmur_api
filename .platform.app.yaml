@@ -2,6 +2,9 @@ name: app
 
 type: php:8.2
 
+relationships:
+    database: "database:postgresql"
+
 runtime:
     extensions:
         - apcu
@@ -9,9 +12,7 @@ runtime:
         - sodium
         - ctype
         - iconv
-        - pgsql
         - pdo_pgsql
-        
 
 #variables:
 #    php:
@@ -30,21 +31,15 @@ web:
             expires: 1h
             passthru: "/index.php"
 
-
-
 mounts:
     "/var": { source: local, source_path: var }
-    
 
 hooks:
     build: |
         set -x -e
-
         curl -fs https://get.symfony.com/cloud/configurator | bash
-        
         NODE_VERSION=18 symfony-build
 
     deploy: |
         set -x -e
-
         symfony-deploy
