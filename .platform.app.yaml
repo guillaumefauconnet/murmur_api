@@ -1,6 +1,6 @@
 name: app
 
-type: php:8.1
+type: php:8.2
 
 runtime:
     extensions:
@@ -9,6 +9,7 @@ runtime:
         - sodium
         - ctype
         - iconv
+        - pgsql
         
 
 #variables:
